@@ -1,0 +1,188 @@
+CREATE DATABASE ecommerce;
+
+CREATE TABLE online_retail (
+    invoiceno VARCHAR(20),              -- Numéro de facture
+    stockcode VARCHAR(20),              -- Code produit
+    description TEXT,                    -- Description du produit
+    quantity INTEGER,                    -- Quantité achetée
+    invoicedate TIMESTAMP,               -- Date de la commande
+    unitprice NUMERIC(10,2),             -- Prix unitaire
+    customerid VARCHAR(20),              -- ID client
+    country VARCHAR(50)                  -- Pays d'achat
+);
+
+SET datestyle = 'DMY';
+
+COPY public.online_retail
+FROM 'C:/tempo/online_retail_II_2009_2010.csv'
+DELIMITER ';' 
+CSV HEADER;
+
+SET datestyle = 'DMY';
+
+COPY public.online_retail
+FROM 'C:/tempo/online_retail_II_2010_2011.csv'
+DELIMITER ';' 
+CSV HEADER;
+
+--Checking the Data 
+SELECT*
+FROM online_retail
+LIMIT 5;
+
+-- Datatype
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'online_retail';
+
+--total rows
+SELECT COUNT(*) FROM online_retail;
+
+--total unique customers 
+SELECT COUNT(DISTINCT customerid) FROM online_retail WHERE customerid IS NOT NULL;
+
+--total unique invoiceno
+
+SELECT COUNT(DISTINCT invoiceno) FROM online_retail;
+
+
+--total unique products 
+
+SELECT COUNT(DISTINCT stockcode) FROM online_retail;
+
+--missing data
+SELECT 
+    COUNT(*) FILTER (WHERE customerid IS NULL) AS missing_customers,
+    COUNT(*) FILTER (WHERE invoicedate IS NULL) AS missing_dates,
+    COUNT(*) FILTER (WHERE description IS NULL) AS missing_descriptions
+FROM online_retail;
+
+--Sales Performance Analysis
+
+--Total sales per country
+SELECT country, SUM(quantity * unitprice) AS total_sales
+FROM online_retail
+GROUP BY country
+ORDER BY total_sales DESC;
+
+--Which months had the highest sales revenue?
+SELECT TO_CHAR(invoicedate, 'YYYY-MM') AS month, 
+       SUM(quantity * unitprice) AS total_revenue
+FROM online_retail
+GROUP BY month
+ORDER BY total_revenue DESC
+LIMIT 1;
+
+
+--Top 5 best-selling products
+SELECT description, SUM(quantity) AS total_quantity_sold
+FROM online_retail
+GROUP BY description
+ORDER BY total_quantity_sold DESC
+LIMIT 5;
+
+--Percentage of revenue per country
+SELECT country, 
+       ROUND(SUM(quantity * unitprice) * 100 / (SELECT SUM(quantity * unitprice) FROM online_retail), 2) AS percentage_revenue
+FROM online_retail
+GROUP BY country
+ORDER BY percentage_revenue DESC;
+
+--Customer Behavior & Segmentation
+
+--Top 10 highest-spending customers
+SELECT customerid, SUM(quantity * unitprice) AS total_spent
+FROM online_retail
+WHERE customerid IS NOT NULL
+GROUP BY customerid
+ORDER BY total_spent DESC
+LIMIT 10;
+
+--Unique customers per month
+SELECT TO_CHAR(invoicedate, 'YYYY-MM') AS month, 
+       COUNT(DISTINCT customerid) AS unique_customers
+FROM online_retail
+WHERE customerid IS NOT NULL
+GROUP BY month
+ORDER BY month;
+
+--Average order value per customer
+SELECT customerid, 
+       ROUND(SUM(quantity * unitprice) / COUNT(DISTINCT invoiceno), 2) AS avg_order_value
+FROM online_retail
+WHERE customerid IS NOT NULL
+GROUP BY customerid
+ORDER BY avg_order_value DESC;
+
+--Customers who made only one purchase (churn analysis)
+SELECT COUNT(*) AS one_time_customers
+FROM (
+    SELECT customerid, COUNT(DISTINCT invoiceno) AS total_orders
+    FROM online_retail
+    WHERE customerid IS NOT NULL
+    GROUP BY customerid
+    HAVING COUNT(DISTINCT invoiceno) = 1
+) AS single_purchase_customers;
+
+
+--Order & Product Analysis
+
+--Total number of orders
+SELECT COUNT(DISTINCT invoiceno) AS total_orders
+FROM online_retail;
+
+--Distribution of order sizes (small vs. large orders)
+WITH order_sizes AS (
+    SELECT invoiceno, SUM(quantity) AS total_items
+    FROM online_retail
+    GROUP BY invoiceno
+)
+SELECT 
+    CASE 
+        WHEN total_items < 10 THEN 'Small Order'
+        ELSE 'Large Order'
+    END AS order_size_category,
+    COUNT(*) AS order_count
+FROM order_sizes
+GROUP BY order_size_category
+ORDER BY order_count DESC;
+
+--Order size distribution by country
+-WITH order_sizes AS (
+    SELECT invoiceno, country, SUM(quantity) AS total_items
+    FROM online_retail
+    GROUP BY invoiceno, country
+)
+SELECT 
+    country,
+    CASE 
+        WHEN total_items < 10 THEN 'Small Order'
+        ELSE 'Large Order'
+    END AS order_size_category,
+    COUNT(*) AS order_count
+FROM order_sizes
+GROUP BY country, order_size_category
+ORDER BY country, order_count DESC;
+
+--Seasonal trends in product demand
+SELECT TO_CHAR(invoicedate, 'YYYY-MM') AS month,
+       SUM(quantity) AS total_quantity_sold
+FROM online_retail
+GROUP BY month
+ORDER BY month;
+
+--Monthly product demand trends
+SELECT TO_CHAR(invoicedate, 'YYYY-MM') AS month,
+       description,
+       SUM(quantity) AS total_quantity_sold
+FROM online_retail
+GROUP BY month, description
+ORDER BY month, total_quantity_sold DESC;
+
+--Return rate
+SELECT 
+    ABS(SUM(CASE WHEN Quantity < 0 THEN Quantity ELSE 0 END)) * 100.0 / 
+    NULLIF(SUM(CASE WHEN Quantity > 0 THEN Quantity ELSE 0 END), 0) AS return_rate
+FROM online_retail;
+
+
