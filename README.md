@@ -71,5 +71,6 @@ Which products have the highest return rates?
 
 ✅ Done by
 [Manal JEWA]
-🔗 LinkedIn: [(https://www.linkedin.com/in/manaljewa/)]
+
+🔗 LinkedIn: [https://www.linkedin.com/in/manaljewa/]
 
