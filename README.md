@@ -28,7 +28,7 @@ Country: Country where the customer is located
 
 🎯 **Business Questions Answered**
 
-In this project, we use SQL queries and Power BI visualizations to answer key business questions:
+In this project, I use SQL queries and Power BI visualizations to answer key business questions:
 
 🔹 Sales Performance Analysis
 
