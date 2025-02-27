@@ -1,11 +1,11 @@
 # Online-retail-Project
 
-📄 About the Dataset
+📄 **About the Dataset**
 
 The Online Retail dataset contains transactional data from a UK-based online retail store operating between 2010 and 2011. The dataset includes customer purchases, product details, and sales information. This data helps analyze customer behavior, product performance, and sales trends.
 This dataset was downloaded from Kaggle (https://www.kaggle.com/datasets/mashlyn/online-retail-ii-uci) an open-source data downloaded in .csv format (Comma Separated Values).
 
-📂 Dataset Columns:
+📂 **Dataset Columns**:
 
 InvoiceNo: Unique order number
 
@@ -23,7 +23,7 @@ CustomerID: Unique identifier for each customer (some values may be null)
 
 Country: Country where the customer is located
 
-🎯 Business Questions Answered
+🎯 **Business Questions Answered**
 
 In this project, we use SQL queries and Power BI visualizations to answer key business questions:
 
@@ -61,7 +61,7 @@ What is the return rate for products?
 
 Which products have the highest return rates?
 
-📂 Repository Contents
+📂 **Repository Contents**
 
 📄 queries.txt → Contains SQL queries used for data analysis
 
