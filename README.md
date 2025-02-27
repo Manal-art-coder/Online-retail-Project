@@ -3,7 +3,7 @@
 📄 **About the Dataset**
 
 The Online Retail dataset contains transactional data from a UK-based online retail store operating between 2010 and 2011. The dataset includes customer purchases, product details, and sales information. This data helps analyze customer behavior, product performance, and sales trends.
-This dataset was downloaded from Kaggle (https://www.kaggle.com/datasets/mashlyn/online-retail-ii-uci) an open-source data downloaded in .csv format (Comma Separated Values).
+This dataset was downloaded from Kaggle: [(https://www.kaggle.com/datasets/mashlyn/online-retail-ii-uci)] an open-source data downloaded in .csv format (Comma Separated Values).
 
 📂 **Dataset Columns**:
 
@@ -69,5 +69,7 @@ Which products have the highest return rates?
 
 📄 README.md → This document
 
-
+✅ Done by
+[Manal JEWA]
+🔗 LinkedIn: [(https://www.linkedin.com/in/manaljewa/)]
 
